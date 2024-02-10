@@ -5,9 +5,11 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     devshell.url = "github:numtide/devshell";
+
+    zig.url = "github:mitchellh/zig-overlay";
   };
 
-  outputs = inputs@{ flake-parts, ... }:
+  outputs = inputs@{ flake-parts, zig, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         inputs.devshell.flakeModule
@@ -44,13 +46,14 @@
 
         devshells.default = {
           packages = with pkgs; [
-            # witx-codegen
-            (python3.withPackages (p: [
-              p.python-lsp-ruff
-            ]))
             cargo
             gcc
             rustc
+            zig.packages.${system}.master
+
+            (python3.withPackages (p: [
+              p.python-lsp-ruff
+            ]))
           ];
         };
       };
